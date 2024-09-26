@@ -1,0 +1,28 @@
+name: Watcher
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/10 * * * *'
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@main
+      - name: Setup rss-watcher
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
+        run: |
+          gh release download -R zcong1993/rss-watcher -p "*_Linux_x86_64.tar.gz" -D ./bin
+          pushd "./bin"
+            for FILE in *; do tar -zxvf $FILE; done
+          popd
+      - name: run task
+        env:
+          RSS_CONFIG: ${{ secrets.RSS_CONFIG }}
+        run: |
+          echo $RSS_CONFIG > ./config.json
+          ./bin/rss-watcher single --serialize --config ./config.json
