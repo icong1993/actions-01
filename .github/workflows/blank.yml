@@ -25,4 +25,4 @@ jobs:
           RSS_CONFIG: ${{ secrets.RSS_CONFIG }}
         run: |
           echo $RSS_CONFIG > ./config.json
-          ./bin/rss-watcher single --serialize --config ./config.json
+          ./bin/rss-watcher single --serialize --config ./config.json --log-level fatal
